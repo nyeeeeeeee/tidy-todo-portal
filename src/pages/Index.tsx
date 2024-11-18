@@ -3,12 +3,18 @@ import { AddTask } from "@/components/AddTask";
 import { TaskList } from "@/components/TaskList";
 import { useToast } from "@/components/ui/use-toast";
 
+interface Task {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
 const Index = () => {
-  const [tasks, setTasks] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const { toast } = useToast();
 
-  const handleAddTask = (task: string) => {
-    setTasks([...tasks, task]);
+  const handleAddTask = (title: string, description: string) => {
+    setTasks([...tasks, { title, description, completed: false }]);
     toast({
       title: "Task added",
       description: "Your new task has been added to the list.",
@@ -23,13 +29,25 @@ const Index = () => {
     });
   };
 
-  const handleEditTask = (index: number, newText: string) => {
+  const handleEditTask = (index: number, newTitle: string, newDescription: string) => {
     const newTasks = [...tasks];
-    newTasks[index] = newText;
+    newTasks[index] = { ...newTasks[index], title: newTitle, description: newDescription };
     setTasks(newTasks);
     toast({
       title: "Task updated",
       description: "Your task has been updated successfully.",
+    });
+  };
+
+  const handleToggleTask = (index: number) => {
+    const newTasks = [...tasks];
+    newTasks[index] = { ...newTasks[index], completed: !newTasks[index].completed };
+    setTasks(newTasks);
+    toast({
+      title: newTasks[index].completed ? "Task completed" : "Task uncompleted",
+      description: newTasks[index].completed
+        ? "Great job! The task has been marked as complete."
+        : "The task has been marked as incomplete.",
     });
   };
 
@@ -46,6 +64,7 @@ const Index = () => {
             tasks={tasks}
             onDelete={handleDeleteTask}
             onEdit={handleEditTask}
+            onToggle={handleToggleTask}
           />
         </div>
       </div>

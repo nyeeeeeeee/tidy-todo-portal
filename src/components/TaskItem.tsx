@@ -2,59 +2,96 @@ import { useState } from "react";
 import { Check, Trash, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 interface TaskItemProps {
-  task: string;
+  task: {
+    title: string;
+    description: string;
+    completed: boolean;
+  };
   onDelete: () => void;
-  onEdit: (newText: string) => void;
+  onEdit: (newTitle: string, newDescription: string) => void;
+  onToggle: () => void;
 }
 
-export const TaskItem = ({ task, onDelete, onEdit }: TaskItemProps) => {
+export const TaskItem = ({ task, onDelete, onEdit, onToggle }: TaskItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState(task);
+  const [editedTitle, setEditedTitle] = useState(task.title);
+  const [editedDescription, setEditedDescription] = useState(task.description);
 
   const handleSubmit = () => {
-    if (editedText.trim()) {
-      onEdit(editedText);
+    if (editedTitle.trim()) {
+      onEdit(editedTitle, editedDescription);
       setIsEditing(false);
     }
   };
 
   return (
-    <div className="task-item flex items-center gap-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-3">
+    <div className="task-item flex gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-3">
+      <div className="flex items-start pt-1">
+        <Checkbox
+          checked={task.completed}
+          onCheckedChange={onToggle}
+          className="mt-1"
+        />
+      </div>
       {isEditing ? (
-        <div className="flex-1 flex gap-2">
+        <div className="flex-1 flex flex-col gap-2">
           <Input
-            value={editedText}
-            onChange={(e) => setEditedText(e.target.value)}
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
             className="flex-1"
             autoFocus
-            onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+            placeholder="Task title..."
           />
-          <Button onClick={handleSubmit} size="icon" variant="ghost">
-            <Check className="h-4 w-4" />
-          </Button>
+          <Textarea
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            placeholder="Add a description..."
+            className="min-h-[80px]"
+          />
+          <div className="flex justify-end gap-2">
+            <Button onClick={() => setIsEditing(false)} variant="outline" size="sm">
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit} size="sm">
+              Save
+            </Button>
+          </div>
         </div>
       ) : (
-        <>
-          <span className="flex-1 text-left">{task}</span>
-          <Button
-            onClick={() => setIsEditing(true)}
-            size="icon"
-            variant="ghost"
-            className="text-gray-500 hover:text-primary"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            onClick={onDelete}
-            size="icon"
-            variant="ghost"
-            className="text-gray-500 hover:text-destructive"
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        </>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <span className={`text-left ${task.completed ? "line-through text-gray-400" : ""}`}>
+              {task.title}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setIsEditing(true)}
+                size="icon"
+                variant="ghost"
+                className="text-gray-500 hover:text-primary"
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                onClick={onDelete}
+                size="icon"
+                variant="ghost"
+                className="text-gray-500 hover:text-destructive"
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          {task.description && (
+            <p className={`mt-2 text-sm text-gray-500 text-left ${task.completed ? "line-through" : ""}`}>
+              {task.description}
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

@@ -1,12 +1,19 @@
 import { TaskItem } from "./TaskItem";
 
-interface TaskListProps {
-  tasks: string[];
-  onDelete: (index: number) => void;
-  onEdit: (index: number, newText: string) => void;
+interface Task {
+  title: string;
+  description: string;
+  completed: boolean;
 }
 
-export const TaskList = ({ tasks, onDelete, onEdit }: TaskListProps) => {
+interface TaskListProps {
+  tasks: Task[];
+  onDelete: (index: number) => void;
+  onEdit: (index: number, newTitle: string, newDescription: string) => void;
+  onToggle: (index: number) => void;
+}
+
+export const TaskList = ({ tasks, onDelete, onEdit, onToggle }: TaskListProps) => {
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -22,7 +29,8 @@ export const TaskList = ({ tasks, onDelete, onEdit }: TaskListProps) => {
           key={index}
           task={task}
           onDelete={() => onDelete(index)}
-          onEdit={(newText) => onEdit(index, newText)}
+          onEdit={(newTitle, newDescription) => onEdit(index, newTitle, newDescription)}
+          onToggle={() => onToggle(index)}
         />
       ))}
     </div>
