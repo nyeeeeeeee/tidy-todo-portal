@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AddTask } from "@/components/AddTask";
 import { TaskList } from "@/components/TaskList";
-import { useToast } from "@/components/ui/use-toast";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface Task {
   title: string;
@@ -9,47 +9,37 @@ interface Task {
   completed: boolean;
 }
 
+type FilterType = "all" | "completed" | "uncompleted";
+
 const Index = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const { toast } = useToast();
+  const [filter, setFilter] = useState<FilterType>("all");
 
   const handleAddTask = (title: string, description: string) => {
     setTasks([...tasks, { title, description, completed: false }]);
-    toast({
-      title: "Task added",
-      description: "Your new task has been added to the list.",
-    });
   };
 
   const handleDeleteTask = (index: number) => {
     setTasks(tasks.filter((_, i) => i !== index));
-    toast({
-      title: "Task deleted",
-      description: "The task has been removed from your list.",
-    });
   };
 
   const handleEditTask = (index: number, newTitle: string, newDescription: string) => {
     const newTasks = [...tasks];
     newTasks[index] = { ...newTasks[index], title: newTitle, description: newDescription };
     setTasks(newTasks);
-    toast({
-      title: "Task updated",
-      description: "Your task has been updated successfully.",
-    });
   };
 
   const handleToggleTask = (index: number) => {
     const newTasks = [...tasks];
     newTasks[index] = { ...newTasks[index], completed: !newTasks[index].completed };
     setTasks(newTasks);
-    toast({
-      title: newTasks[index].completed ? "Task completed" : "Task uncompleted",
-      description: newTasks[index].completed
-        ? "Great job! The task has been marked as complete."
-        : "The task has been marked as incomplete.",
-    });
   };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "completed") return task.completed;
+    if (filter === "uncompleted") return !task.completed;
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-[#F6F8FA] py-8">
@@ -60,8 +50,23 @@ const Index = () => {
             Keep track of your daily tasks and stay organized.
           </p>
           <AddTask onAdd={handleAddTask} />
+          
+          <div className="my-4">
+            <ToggleGroup type="single" value={filter} onValueChange={(value: FilterType) => setFilter(value || "all")}>
+              <ToggleGroupItem value="all" aria-label="Show all tasks">
+                All
+              </ToggleGroupItem>
+              <ToggleGroupItem value="completed" aria-label="Show completed tasks">
+                Completed
+              </ToggleGroupItem>
+              <ToggleGroupItem value="uncompleted" aria-label="Show uncompleted tasks">
+                Uncompleted
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+
           <TaskList
-            tasks={tasks}
+            tasks={filteredTasks}
             onDelete={handleDeleteTask}
             onEdit={handleEditTask}
             onToggle={handleToggleTask}
