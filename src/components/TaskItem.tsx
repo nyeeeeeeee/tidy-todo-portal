@@ -31,9 +31,13 @@ export const TaskItem = ({ task, onDelete, onEdit, onToggle, onPin }: TaskItemPr
   };
 
   return (
-    <div className={`task-item flex gap-4 bg-white p-4 rounded-lg shadow-sm border transition-all ${
-      task.pinned ? 'border-yellow-400 border-2' : 'border-gray-100'
-    } mb-3`}>
+    <div 
+      className={`task-item flex gap-4 bg-white p-4 rounded-lg shadow-sm transition-all ${
+        task.pinned 
+          ? 'border-2 border-yellow-400 shadow-md' 
+          : 'border border-gray-100'
+      } mb-3`}
+    >
       <div className="flex items-start pt-1">
         <Checkbox
           checked={task.completed}
@@ -73,7 +77,10 @@ export const TaskItem = ({ task, onDelete, onEdit, onToggle, onPin }: TaskItemPr
             </span>
             <div className="flex gap-2">
               <Button
-                onClick={onPin}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPin();
+                }}
                 size="icon"
                 variant="ghost"
                 className={`text-gray-500 hover:text-yellow-500 ${task.pinned ? 'text-yellow-500' : ''}`}
