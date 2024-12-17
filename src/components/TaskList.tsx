@@ -1,6 +1,7 @@
 import { TaskItem } from "./TaskItem";
 
 interface Task {
+  id: string;
   title: string;
   description: string;
   completed: boolean;
@@ -28,7 +29,7 @@ export const TaskList = ({ tasks, onDelete, onEdit, onToggle, onPin }: TaskListP
     <div className="space-y-2">
       {tasks.map((task, index) => (
         <TaskItem
-          key={index}
+          key={task.id}
           task={task}
           onDelete={() => onDelete(index)}
           onEdit={(newTitle, newDescription) => onEdit(index, newTitle, newDescription)}

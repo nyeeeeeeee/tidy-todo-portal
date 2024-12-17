@@ -1,24 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AddTask } from "@/components/AddTask";
 import { TaskList } from "@/components/TaskList";
 import { Clock } from "@/components/Clock";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface Task {
+  id: string;
   title: string;
   description: string;
   completed: boolean;
-  pinned?: boolean;
+  pinned: boolean;
 }
 
 type FilterType = "all" | "completed" | "uncompleted";
 
 const Index = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const savedTasks = localStorage.getItem('tasks');
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
   const [filter, setFilter] = useState<FilterType>("all");
 
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
   const handleAddTask = (title: string, description: string) => {
-    setTasks([...tasks, { title, description, completed: false, pinned: false }]);
+    const newTask: Task = {
+      id: crypto.randomUUID(), // Generate a unique ID for each task
+      title,
+      description,
+      completed: false,
+      pinned: false
+    };
+    setTasks([...tasks, newTask]);
   };
 
   const handleDeleteTask = (index: number) => {
@@ -40,8 +56,8 @@ const Index = () => {
   const handlePinTask = (index: number) => {
     setTasks(prevTasks => {
       const newTasks = [...prevTasks];
-      // Toggle the pin state of the clicked task
-      newTasks[index] = { ...newTasks[index], pinned: !newTasks[index].pinned };
+      const taskToUpdate = newTasks[index];
+      newTasks[index] = { ...taskToUpdate, pinned: !taskToUpdate.pinned };
       return newTasks;
     });
   };

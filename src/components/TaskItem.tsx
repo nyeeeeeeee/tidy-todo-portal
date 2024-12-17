@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface TaskItemProps {
   task: {
+    id: string;
     title: string;
     description: string;
     completed: boolean;
