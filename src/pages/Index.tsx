@@ -34,32 +34,41 @@ const Index = () => {
       completed: false,
       pinned: false
     };
-    setTasks([...tasks, newTask]);
+    setTasks(prevTasks => [...prevTasks, newTask]);
   };
 
-  const handleDeleteTask = (index: number) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
   };
 
-  const handleEditTask = (index: number, newTitle: string, newDescription: string) => {
-    const newTasks = [...tasks];
-    newTasks[index] = { ...newTasks[index], title: newTitle, description: newDescription };
-    setTasks(newTasks);
+  const handleEditTask = (taskId: string, newTitle: string, newDescription: string) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === taskId 
+          ? { ...task, title: newTitle, description: newDescription }
+          : task
+      )
+    );
   };
 
-  const handleToggleTask = (index: number) => {
-    const newTasks = [...tasks];
-    newTasks[index] = { ...newTasks[index], completed: !newTasks[index].completed };
-    setTasks(newTasks);
+  const handleToggleTask = (taskId: string) => {
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    );
   };
 
-  const handlePinTask = (index: number) => {
-    setTasks(prevTasks => {
-      const newTasks = [...prevTasks];
-      const taskToUpdate = newTasks[index];
-      newTasks[index] = { ...taskToUpdate, pinned: !taskToUpdate.pinned };
-      return newTasks;
-    });
+  const handlePinTask = (taskId: string) => {
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId
+          ? { ...task, pinned: !task.pinned }
+          : task
+      )
+    );
   };
 
   const sortTasks = (tasksToSort: Task[]) => {

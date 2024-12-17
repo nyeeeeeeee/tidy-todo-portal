@@ -10,10 +10,10 @@ interface Task {
 
 interface TaskListProps {
   tasks: Task[];
-  onDelete: (index: number) => void;
-  onEdit: (index: number, newTitle: string, newDescription: string) => void;
-  onToggle: (index: number) => void;
-  onPin: (index: number) => void;
+  onDelete: (taskId: string) => void;
+  onEdit: (taskId: string, newTitle: string, newDescription: string) => void;
+  onToggle: (taskId: string) => void;
+  onPin: (taskId: string) => void;
 }
 
 export const TaskList = ({ tasks, onDelete, onEdit, onToggle, onPin }: TaskListProps) => {
@@ -27,14 +27,14 @@ export const TaskList = ({ tasks, onDelete, onEdit, onToggle, onPin }: TaskListP
 
   return (
     <div className="space-y-2">
-      {tasks.map((task, index) => (
+      {tasks.map((task) => (
         <TaskItem
           key={task.id}
           task={task}
-          onDelete={() => onDelete(index)}
-          onEdit={(newTitle, newDescription) => onEdit(index, newTitle, newDescription)}
-          onToggle={() => onToggle(index)}
-          onPin={() => onPin(index)}
+          onDelete={() => onDelete(task.id)}
+          onEdit={(newTitle, newDescription) => onEdit(task.id, newTitle, newDescription)}
+          onToggle={() => onToggle(task.id)}
+          onPin={() => onPin(task.id)}
         />
       ))}
     </div>
