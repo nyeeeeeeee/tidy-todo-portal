@@ -38,9 +38,12 @@ const Index = () => {
   };
 
   const handlePinTask = (index: number) => {
-    const newTasks = [...tasks];
-    newTasks[index] = { ...newTasks[index], pinned: !newTasks[index].pinned };
-    setTasks(newTasks);
+    setTasks(prevTasks => {
+      const newTasks = [...prevTasks];
+      // Toggle the pin state of the clicked task
+      newTasks[index] = { ...newTasks[index], pinned: !newTasks[index].pinned };
+      return newTasks;
+    });
   };
 
   const sortTasks = (tasksToSort: Task[]) => {
