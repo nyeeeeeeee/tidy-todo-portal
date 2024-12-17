@@ -4,6 +4,7 @@ interface Task {
   title: string;
   description: string;
   completed: boolean;
+  pinned?: boolean;
 }
 
 interface TaskListProps {
@@ -11,9 +12,10 @@ interface TaskListProps {
   onDelete: (index: number) => void;
   onEdit: (index: number, newTitle: string, newDescription: string) => void;
   onToggle: (index: number) => void;
+  onPin: (index: number) => void;
 }
 
-export const TaskList = ({ tasks, onDelete, onEdit, onToggle }: TaskListProps) => {
+export const TaskList = ({ tasks, onDelete, onEdit, onToggle, onPin }: TaskListProps) => {
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -31,6 +33,7 @@ export const TaskList = ({ tasks, onDelete, onEdit, onToggle }: TaskListProps) =
           onDelete={() => onDelete(index)}
           onEdit={(newTitle, newDescription) => onEdit(index, newTitle, newDescription)}
           onToggle={() => onToggle(index)}
+          onPin={() => onPin(index)}
         />
       ))}
     </div>

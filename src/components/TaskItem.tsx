@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Trash, Edit } from "lucide-react";
+import { Check, Trash, Edit, Pin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,13 +10,15 @@ interface TaskItemProps {
     title: string;
     description: string;
     completed: boolean;
+    pinned?: boolean;
   };
   onDelete: () => void;
   onEdit: (newTitle: string, newDescription: string) => void;
   onToggle: () => void;
+  onPin: () => void;
 }
 
-export const TaskItem = ({ task, onDelete, onEdit, onToggle }: TaskItemProps) => {
+export const TaskItem = ({ task, onDelete, onEdit, onToggle, onPin }: TaskItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(task.title);
   const [editedDescription, setEditedDescription] = useState(task.description);
@@ -29,7 +31,9 @@ export const TaskItem = ({ task, onDelete, onEdit, onToggle }: TaskItemProps) =>
   };
 
   return (
-    <div className="task-item flex gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-3">
+    <div className={`task-item flex gap-4 bg-white p-4 rounded-lg shadow-sm border transition-all ${
+      task.pinned ? 'border-yellow-400 border-2' : 'border-gray-100'
+    } mb-3`}>
       <div className="flex items-start pt-1">
         <Checkbox
           checked={task.completed}
@@ -68,6 +72,14 @@ export const TaskItem = ({ task, onDelete, onEdit, onToggle }: TaskItemProps) =>
               {task.title}
             </span>
             <div className="flex gap-2">
+              <Button
+                onClick={onPin}
+                size="icon"
+                variant="ghost"
+                className={`text-gray-500 hover:text-yellow-500 ${task.pinned ? 'text-yellow-500' : ''}`}
+              >
+                <Pin className="h-4 w-4" />
+              </Button>
               <Button
                 onClick={() => setIsEditing(true)}
                 size="icon"
